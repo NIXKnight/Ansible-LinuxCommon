@@ -1,6 +1,6 @@
-# **LinuxCommon**
+# **Ansible-LinuxCommon**
 
-LinuxCommon is an Ansible role for configuring shell environment and installing some very basic utilities on a new Linux system. It does the following on a default install:
+Ansible-LinuxCommon is an Ansible role for configuring shell environment and installing some very basic utilities on a new Linux system. It does the following on a default install:
 * Change hostname.
 * Replace the host file according to the hostname.
 * Replace a pre-modified `/etc/bash.bashrc`, `.profile` and `.bashrc` files for root and user.
@@ -37,14 +37,14 @@ An example of running the role is as follows:
     - hosts: servers
       gather_facts: True
       roles:
-         - LinuxCommon
+         - Ansible-LinuxCommon
 
 If you don't want to change hostname:
 
     - hosts: servers
       gather_facts: True
       roles:
-         - {role: LinuxCommon, change_hostname: False}
+         - {role: Ansible-LinuxCommon, change_hostname: False}
 
 ## **License**
 
