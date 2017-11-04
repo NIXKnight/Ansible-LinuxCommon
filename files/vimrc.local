@@ -1,0 +1,4 @@
+syntax on
+colorscheme evening
+set paste
+autocmd BufEnter * set mouse=

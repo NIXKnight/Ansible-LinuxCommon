@@ -1,0 +1,103 @@
+---
+# tasks file for Ansible-LinuxCommon
+- name: Change Host Name
+  hostname:
+    name: "{{ inventory_hostname_short }}"
+  when: change_hostname
+
+- name: Replace Hosts File (Debian/Ubuntu)
+  template: src=templates/hosts.j2 dest=/etc/hosts
+  when: change_hostname
+
+- name: Replace bashrc (Debian/Ubuntu)
+  copy: src=files/bash.bashrc dest=/etc/bash.bashrc
+  when: ansible_os_family == 'Debian'
+
+- name: Replace Skeleton profile (Debian/Ubuntu)
+  copy: src=files/user-profile dest=/etc/skel/.profile owner=root group=root
+  when: ansible_os_family == 'Debian'
+
+- name: Replace root profile (Debian/Ubuntu)
+  copy: src=files/root-profile dest=/root/.profile owner=root group=root
+  when: ansible_os_family == 'Debian'
+
+- name: Replace User profile (Debian/Ubuntu)
+  copy: src=files/user-profile dest=/home/{{ ansible_ssh_user }}/.profile owner="{{ ansible_ssh_user }}" group="{{ ansible_ssh_user }}"
+  when: ansible_os_family == 'Debian'
+
+- name: Setup Official Package Repositories (Debian/Ubuntu)
+  template: src=templates/{{ ansible_distribution }}.sources.list.j2 dest=/etc/apt/sources.list
+  when: ansible_os_family == 'Debian'
+
+- name: Check Current Kernel Version (Debian/Ubuntu)
+  shell: uname -v | awk '{print $4}'
+  register: current_kernel
+  changed_when: False
+
+- name: Install Updates (Debian/Ubuntu)
+  apt:
+    upgrade: dist
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
+
+- name: Check Installed Kernel Version (Debian/Ubuntu)
+  shell: dpkg --list | grep linux-image-$(uname -r) | awk '{print $3}'
+  register: installed_kernel
+  changed_when: False
+
+- name: Remove Exim (Debian/Ubuntu)
+  apt: pkg={{ item }} state=absent purge=yes
+  with_items:
+    - exim4
+    - exim4-base
+    - exim4-config
+    - exim4-daemon-light
+
+- name: Install Basic Tools
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - htop
+    - iotop
+    - iftop
+    - ncdu
+    - ntp
+    - ntpdate
+    - curl
+    - wget
+    - bash-completion
+    - vim
+    - mtr-tiny
+    - git
+    - unzip
+
+- name: Install libpam-systemd (for Debian Jessie)
+  apt: pkg={{ item }} state=installed update_cache=yes
+  with_items:
+    - libpam-systemd
+  when: (ansible_os_family == 'Debian') and (ansible_distribution_release == 'jessie')
+
+- name: Configure vim editor
+  copy: src=files/vimrc.local dest=/etc/vim/vimrc.local
+  when: ansible_os_family == 'Debian'
+
+- name: Set vim as Default Editor
+  command: update-alternatives --set editor /usr/bin/vim.basic
+  when: ansible_os_family == 'Debian'
+
+- name: Reboot
+  shell: sleep 2 && shutdown -r now "Rebooting..."
+  async: 1
+  poll: 0
+  ignore_errors: True
+  when: (change_hostname) or (installed_kernel.stdout != current_kernel.stdout)
+
+- name: Wait for Reboot
+  become: False
+  connection: local
+  local_action: wait_for
+  args:
+    host: "{{ ansible_host }}"
+    port: "{{ ansible_port }}"
+    state: started
+    delay: 40
+    timeout: 120
