@@ -71,10 +71,22 @@
     - unzip
 
 - name: Install libpam-systemd (for Debian Jessie)
-  apt: pkg={{ item }} state=installed update_cache=yes
+  apt: pkg={{ item }} state=installed
   with_items:
     - libpam-systemd
   when: (ansible_os_family == 'Debian') and (ansible_distribution_release == 'jessie')
+
+- name: Install sudo
+  apt: pkg=sudo state=installed
+  when: (ansible_os_family == 'Debian') and (setup_sudo)
+
+- name: Configure sudo Group Login Without Password
+  template: src=templates/95-sudo-group.j2 dest=/etc/sudoers.d/95-sudo-group
+  when: (ansible_os_family == 'Debian') and (setup_sudo)
+
+- name: Add User {{ ansible_ssh_user }} to sudo Group
+  user: name='{{ ansible_ssh_user }}' groups=sudo append=yes
+  when: (ansible_os_family == 'Debian') and (setup_sudo)
 
 - name: Configure vim editor
   copy: src=files/vimrc.local dest=/etc/vim/vimrc.local
@@ -89,7 +101,7 @@
   async: 1
   poll: 0
   ignore_errors: True
-  when: (change_hostname) or (installed_kernel.stdout != current_kernel.stdout)
+  when: (change_hostname) or (installed_kernel.stdout != current_kernel.stdout) or (setup_sudo)
 
 - name: Wait for Reboot
   become: False
@@ -101,3 +113,4 @@
     state: started
     delay: 40
     timeout: 120
+  when: (change_hostname) or (installed_kernel.stdout != current_kernel.stdout) or (setup_sudo)

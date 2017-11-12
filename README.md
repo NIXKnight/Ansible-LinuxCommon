@@ -9,10 +9,15 @@ Ansible-LinuxCommon is an Ansible role for configuring shell environment and ins
 * Installs `htop`, `iotop`, `iftop`, `ncdu`, `ntp`, `ntpdate`, `curl`, `bash-completion`, `vim`, `mtr-tiny`, `git` and `unzip`.
 * Purges `exim`.
 * configures `vim` editor.
+* Install sudo.
+* Configure password-less sudo for sudo group users.
+* Add `ansible_ssh_user` to sudo group.
 * Installs `libpam-systemd` (only for Debian Jessie. See [this](https://serverfault.com/questions/706475/ssh-sessions-hang-on-shutdown-reboot) thread)
 * Check kernel version upgrade and reboots the server if there is a kernel update.
 
 bash.bashrc is a modified version of the default file that comes with Debian. The file includes shell customizations and logging. Shell logs are sent to user.info facility.
+
+Bits for sudo are added incase you have installed Debian/Ubuntu via CD/DVD.
 
 ## **Requirements**
 
@@ -24,9 +29,11 @@ There is one variable `change_hostname` in `defaults/main.yml` based on which th
 
 The role sets `inventory_hostname_short` as the hostname.
 
+based on `setup_sudo` variable, the role can decide if `sudo` related actions should be performed. By defaults its set to `True`. You can change it to `False` if you don't want the role to perform `sudo` actions.
+
 ## **Dependencies**
 
-This role doesn't depends on any other role for execution. The role assumes that you have sudo installed. You can also use `su` method to become root if you don't want to install `sudo`.
+This role doesn't depends on any other role for execution. The role is written to support both CD/DVD installs and perinstalled images (e.g. Amazon Machine Images) where `sudo` is already installed and configured. You can also use `su` method to become root if you don't have sudo installed.
 
 ## **Example Playbook**
 
@@ -45,6 +52,13 @@ If you don't want to change hostname:
       gather_facts: True
       roles:
          - {role: Ansible-LinuxCommon, change_hostname: False}
+
+If you don't wan to add the user to password-less `sudo` or if its already there:
+
+    - hosts: servers
+      gather_facts: True
+      roles:
+         - {role: Ansible-LinuxCommon, setup_sudo: False}
 
 ## **License**
 
