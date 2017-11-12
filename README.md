@@ -9,15 +9,15 @@ Ansible-LinuxCommon is an Ansible role for configuring shell environment and ins
 * Installs `htop`, `iotop`, `iftop`, `ncdu`, `ntp`, `ntpdate`, `curl`, `bash-completion`, `vim`, `mtr-tiny`, `git` and `unzip`.
 * Purges `exim`.
 * configures `vim` editor.
-* Install sudo.
-* Configure password-less sudo for sudo group users.
+* Install `sudo`.
+* Configure password-less `sudo` for `sudo` group users.
 * Add `ansible_ssh_user` to sudo group.
 * Installs `libpam-systemd` (only for Debian Jessie. See [this](https://serverfault.com/questions/706475/ssh-sessions-hang-on-shutdown-reboot) thread)
 * Check kernel version upgrade and reboots the server if there is a kernel update.
 
 bash.bashrc is a modified version of the default file that comes with Debian. The file includes shell customizations and logging. Shell logs are sent to user.info facility.
 
-Bits for sudo are added incase you have installed Debian/Ubuntu via CD/DVD.
+Bits for `sudo` are added incase you have installed Debian/Ubuntu via CD/DVD.
 
 ## **Requirements**
 
@@ -25,11 +25,9 @@ At the moment this role is being written for Debian based distributions e.g. Deb
 
 ## **Role Variables**
 
-There is one variable `change_hostname` in `defaults/main.yml` based on which the role decides wether to change the hostname or not. By default it is set to `True`. If you don't want to change change hostname, you can set it to `False`. See the example below.
+The variable `change_hostname` in `defaults/main.yml` based on which the role decides wether to change the hostname or not. By default it is set to `True`. If you don't want to change change hostname, you can set it to `False`. See the example below. The role sets `inventory_hostname_short` as the hostname.
 
-The role sets `inventory_hostname_short` as the hostname.
-
-based on `setup_sudo` variable, the role can decide if `sudo` related actions should be performed. By defaults its set to `True`. You can change it to `False` if you don't want the role to perform `sudo` actions.
+Based on `setup_sudo` variable in `defaults/main.yml`, the role can decide if `sudo` related actions should be performed. By defaults its set to `True`. You can change it to `False` if you don't want the role to perform `sudo` actions. See the example below.
 
 ## **Dependencies**
 
@@ -53,7 +51,7 @@ If you don't want to change hostname:
       roles:
          - {role: Ansible-LinuxCommon, change_hostname: False}
 
-If you don't wan to add the user to password-less `sudo` or if its already there:
+If you don't want to add the user to password-less `sudo` or if its already there:
 
     - hosts: servers
       gather_facts: True
