@@ -26,7 +26,7 @@ fi
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PROMPT_COMMAND='RETRN_VAL=$?;logger -p user.info "$COMM_TIMESTMP $SHELL - $(if [ -z "$SUDO_USER" ]; then echo $(whoami); else echo "$SUDO_USER as $(whoami)"; fi) $USER_IP_ADDR : $(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" )" ; echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
     ;;
 *)
     ;;
