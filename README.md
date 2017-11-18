@@ -15,7 +15,7 @@ Ansible-LinuxCommon is an Ansible role for configuring shell environment and ins
 * Installs `libpam-systemd` (only for Debian Jessie. See [this](https://serverfault.com/questions/706475/ssh-sessions-hang-on-shutdown-reboot) thread)
 * Check kernel version upgrade and reboots the server if there is a kernel update.
 
-bash.bashrc is a modified version of the default file that comes with Debian. The file includes shell customizations and logging. Shell logs are sent to user.info facility.
+bash.bashrc is a modified version of the default file that comes with Debian.
 
 Bits for `sudo` are added incase you have installed Debian/Ubuntu via CD/DVD.
 
