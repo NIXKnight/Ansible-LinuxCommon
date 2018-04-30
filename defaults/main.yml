@@ -2,3 +2,10 @@
 # defaults file for Ansible-LinuxCommon
 change_hostname: True
 setup_sudo: True
+debian_mirror: "ftp.debian.org"
+debian_security_mirror: "security.debian.org"
+ubuntu_mirror: "archive.ubuntu.com"
+Ubuntu_canonical_partner_mirror: "archive.canonical.com"
+debian_repos: "main contrib non-free"
+ubuntu_repos: "main restricted universe multiverse"
+enable_src_repos: False

@@ -29,6 +29,21 @@ The variable `change_hostname` in `defaults/main.yml` based on which the role de
 
 Based on `setup_sudo` variable in `defaults/main.yml`, the role can decide if `sudo` related actions should be performed. By defaults its set to `True`. You can change it to `False` if you don't want the role to perform `sudo` actions. See the example below.
 
+`enable_src_repos` controls if source repositories should be enabled or not. By default it is set to `False`.
+
+Variables:
+* `debian_mirror`
+* `debian_security_mirror`
+* `ubuntu_mirror`
+* `Ubuntu_canonical_partner_mirror`
+
+Can be used to change mirrors for package repositories. See `defaults/main.yml` for their default values.
+
+By default, variables:
+* `debian_repos`
+* `ubuntu_repos`
+
+Are used to enable repositories `main`, `contrib`, `non-free` (in case of Debian) and `main`, `restricted`, `universe`, `multiverse`, `partner` (in case of Ubuntu).
 ## **Dependencies**
 
 This role doesn't depends on any other role for execution. The role is written to support both CD/DVD installs and perinstalled images (e.g. Amazon Machine Images) where `sudo` is already installed and configured. You can also use `su` method to become root if you don't have sudo installed.

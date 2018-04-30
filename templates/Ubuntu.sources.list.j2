@@ -1,11 +1,11 @@
-deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }} main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }} main restricted universe multiverse
+deb http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }} {{ ubuntu_repos }}
+{% if enable_src_repos == True %}deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }} {{ ubuntu_repos }}{% else %}# deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }} {{ ubuntu_repos }}{% endif %}
 
-deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-updates main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-updates main restricted universe multiverse
+deb http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates {{ ubuntu_repos }}
+{% if enable_src_repos == True %}deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates {{ ubuntu_repos }}{% else %}# deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates {{ ubuntu_repos }}{% endif %}
 
-deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-security main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-security main restricted universe multiverse
+deb http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-security {{ ubuntu_repos }}
+{% if enable_src_repos == True %}deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-security {{ ubuntu_repos }}{% else %}# deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-security {{ ubuntu_repos }}{% endif %}
 
-deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
-deb-src http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
+deb http://{{ Ubuntu_canonical_partner_mirror }}/ubuntu {{ ansible_distribution_release }} partner
+{% if enable_src_repos == True %}deb-src http://{{ Ubuntu_canonical_partner_mirror }}/ubuntu {{ ansible_distribution_release }} partner{% else %}# deb-src http://{{ Ubuntu_canonical_partner_mirror }}/ubuntu {{ ansible_distribution_release }} partner{% endif %}

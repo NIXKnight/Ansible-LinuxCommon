@@ -1,8 +1,8 @@
-deb http://ftp.debian.org/debian {{ ansible_distribution_release }} main contrib non-free
-#deb-src http://ftp.debian.org/debian {{ ansible_distribution_release }} main contrib non-free
+deb http://{{ debian_mirror }}/debian {{ ansible_distribution_release }} {{ debian_repos }}
+{% if enable_src_repos == True %}deb-src http://{{ debian_mirror }}/debian {{ ansible_distribution_release }} {{ debian_repos }}{% else %}# deb-src http://{{ debian_mirror }}/debian {{ ansible_distribution_release }} {{ debian_repos }}{% endif %}
 
-deb http://ftp.debian.org/debian {{ ansible_distribution_release }}-updates main contrib non-free
-#deb-src http://ftp.debian.org/debian {{ ansible_distribution_release }}-updates main contrib non-free
+deb http://{{ debian_mirror }}/debian {{ ansible_distribution_release }}-updates {{ debian_repos }}
+{% if enable_src_repos == True %}deb-src http://{{ debian_mirror }}/debian {{ ansible_distribution_release }}-updates {{ debian_repos }}{% else %}# deb-src http://{{ debian_mirror }}/debian {{ ansible_distribution_release }}-updates {{ debian_repos }}{% endif %}
 
-deb http://security.debian.org/ {{ ansible_distribution_release }}/updates main contrib non-free
-#deb-src http://security.debian.org/ {{ ansible_distribution_release }}/updates main contrib non-free
+deb http://{{ debian_security_mirror }}/ {{ ansible_distribution_release }}/updates {{ debian_repos }}
+{% if enable_src_repos == True %}deb-src http://{{ debian_security_mirror }}/ {{ ansible_distribution_release }}/updates {{ debian_repos }}{% else %}# deb-src http://{{ debian_security_mirror }}/ {{ ansible_distribution_release }}/updates {{ debian_repos }}{% endif %}
