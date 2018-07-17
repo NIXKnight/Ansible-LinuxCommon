@@ -1,0 +1,19 @@
+basic_packages:
+  - htop
+  - iotop
+  - iftop
+  - ncdu
+  - ntp
+  - ntpdate
+  - curl
+  - wget
+  - bash-completion
+  - vim
+  - mtr-tiny
+  - git
+  - unzip
+exim_packages:
+  - exim4
+  - exim4-base
+  - exim4-config
+  - exim4-daemon-light

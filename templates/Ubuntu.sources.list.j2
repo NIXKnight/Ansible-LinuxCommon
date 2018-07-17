@@ -1,11 +1,11 @@
-deb http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }} {{ ubuntu_repos }}
-{% if enable_src_repos == True %}deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }} {{ ubuntu_repos }}{% else %}# deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }} {{ ubuntu_repos }}{% endif %}
+deb http://{{ UBUNTU_MIRROR }}/ubuntu/ {{ ansible_distribution_release }} {{ UBUNTU_REPOS }}
+{% if ENABLE_SRC_REPOS == True %}deb-src http://{{ UBUNTU_MIRROR }}/ubuntu/ {{ ansible_distribution_release }} {{ UBUNTU_REPOS }}{% else %}# deb-src http://{{ UBUNTU_MIRROR }}/ubuntu/ {{ ansible_distribution_release }} {{ UBUNTU_REPOS }}{% endif %}
 
-deb http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates {{ ubuntu_repos }}
-{% if enable_src_repos == True %}deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates {{ ubuntu_repos }}{% else %}# deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates {{ ubuntu_repos }}{% endif %}
+deb http://{{ UBUNTU_MIRROR }}/ubuntu/ {{ ansible_distribution_release }}-updates {{ UBUNTU_REPOS }}
+{% if ENABLE_SRC_REPOS == True %}deb-src http://{{ UBUNTU_MIRROR }}/ubuntu/ {{ ansible_distribution_release }}-updates {{ UBUNTU_REPOS }}{% else %}# deb-src http://{{ UBUNTU_MIRROR }}/ubuntu/ {{ ansible_distribution_release }}-updates {{ UBUNTU_REPOS }}{% endif %}
 
-deb http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-security {{ ubuntu_repos }}
-{% if enable_src_repos == True %}deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-security {{ ubuntu_repos }}{% else %}# deb-src http://{{ ubuntu_mirror }}/ubuntu/ {{ ansible_distribution_release }}-security {{ ubuntu_repos }}{% endif %}
+deb http://{{ UBUNTU_MIRROR }}/ubuntu/ {{ ansible_distribution_release }}-security {{ UBUNTU_REPOS }}
+{% if ENABLE_SRC_REPOS == True %}deb-src http://{{ UBUNTU_MIRROR }}/ubuntu/ {{ ansible_distribution_release }}-security {{ UBUNTU_REPOS }}{% else %}# deb-src http://{{ UBUNTU_MIRROR }}/ubuntu/ {{ ansible_distribution_release }}-security {{ UBUNTU_REPOS }}{% endif %}
 
-deb http://{{ Ubuntu_canonical_partner_mirror }}/ubuntu {{ ansible_distribution_release }} partner
-{% if enable_src_repos == True %}deb-src http://{{ Ubuntu_canonical_partner_mirror }}/ubuntu {{ ansible_distribution_release }} partner{% else %}# deb-src http://{{ Ubuntu_canonical_partner_mirror }}/ubuntu {{ ansible_distribution_release }} partner{% endif %}
+deb http://{{ UBUNTU_CANONICAL_PARTNER_MIRROR }}/ubuntu {{ ansible_distribution_release }} partner
+{% if ENABLE_SRC_REPOS == True %}deb-src http://{{ UBUNTU_CANONICAL_PARTNER_MIRROR }}/ubuntu {{ ansible_distribution_release }} partner{% else %}# deb-src http://{{ UBUNTU_CANONICAL_PARTNER_MIRROR }}/ubuntu {{ ansible_distribution_release }} partner{% endif %}
