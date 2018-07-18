@@ -28,7 +28,9 @@
 - name: Replace root profile (Debian/Ubuntu)
   copy:
     src: files/root-profile
-    dest: /root/.profile owner=root group=root
+    dest: /root/.profile
+    owner: root
+    group: root
   when: ansible_os_family == 'Debian'
 
 - name: Replace User profile (Debian/Ubuntu)
