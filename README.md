@@ -6,6 +6,7 @@ Ansible-LinuxCommon is an Ansible role for configuring shell environment and ins
 * Replace a pre-modified `/etc/bash.bashrc`, `.profile` and `.bashrc` files for root and `ansible_ssh_user`.
 * Replace default `sources.list` to include all official repositories e.g. `main`, `contrib`, `non-free` (in case of Debian) and `main`, `restricted`, `universe`, `multiverse`, `partner` (in case of Ubuntu).
 * Install updates.
+* Install 3rd party repositories.
 * Installs `htop`, `iotop`, `iftop`, `ncdu`, `ntp`, `ntpdate`, `curl`, `bash-completion`, `vim`, `mtr-tiny`, `git` and `unzip`.
 * Purges `exim`.
 * configures `vim` editor.
@@ -46,6 +47,13 @@ Are used to enable repositories `main`, `contrib`, `non-free` (in case of Debian
 
 By default, the value of `REBOOT` is `True`. The remote machine will reboot after performing all operations and wait for it to come back for `REBOOT_TIMEOUT` which is 120 seconds.
 
+You can add 3rd party package repositories to the system by using the following variables:
+* `SETUP_THIRD_PARTY_REPOS` (by default set to `False`).
+* `THIRD_PARTY_REPOS_KEYS`.
+* `THIRD_PARTY_REPOS`.
+
+See example below on how to add 3rd party repositories.
+
 You may provide a list of extra packages that you want to install via `EXTRA_PACKAGES`. See example below.
 
 ## **Dependencies**
@@ -76,6 +84,28 @@ If you don't want to add the user to password-less `sudo` or if its already ther
   gather_facts: True
   roles:
       - { role: Ansible-LinuxCommon, SETUP_SUDO: False }
+```
+Add 3rd party repositories like Ondřej Surý's PHP repository and Syncthing:
+```yml
+- hosts: servers
+  gather_facts: True
+  roles:
+    - role: Ansible-LinuxCommon
+      SETUP_3RD_PARTY_REPOS: True
+      THIRD_PARTY_REPOS_KEYS:
+        - "https://packages.sury.org/php/apt.gpg"
+        - "https://syncthing.net/release-key.txt"
+      THIRD_PARTY_REPOS:
+        - NAME: "php"
+          SCHEME: "https"
+          URI: "packages.sury.org/php"
+          RELEASE: "stretch"
+          REPOS: "main"
+        - NAME: "syncthing"
+          SCHEME: "https"
+          URI: "apt.syncthing.net"
+          RELEASE: "syncthing"
+          REPOS: "stable"
 ```
 Install extra packages:
 ```yml
