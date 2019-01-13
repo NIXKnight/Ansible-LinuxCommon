@@ -52,14 +52,14 @@
     src: templates/3rd_party.list.j2
     dest: /etc/apt/sources.list.d/{{ item.NAME }}.list
   with_items: "{{ THIRD_PARTY_REPOS }}"
-  when: (SETUP_3RD_PARTY_REPOS) and (ansible_os_family == 'Debian')
+  when: (SETUP_THIRD_PARTY_REPOS) and (ansible_os_family == 'Debian')
 
 - name: Add 3rd Party Repository Keys
   apt_key:
     url: "{{ item }}"
     state: present
   with_items: "{{ THIRD_PARTY_REPOS_KEYS }}"
-  when: (SETUP_3RD_PARTY_REPOS) and (ansible_os_family == 'Debian')
+  when: (SETUP_THIRD_PARTY_REPOS) and (ansible_os_family == 'Debian')
 
 - name: Install Updates (Debian/Ubuntu)
   apt:
