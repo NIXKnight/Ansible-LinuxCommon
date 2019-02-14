@@ -45,7 +45,7 @@ By default, variables:
 
 Are used to enable repositories `main`, `contrib`, `non-free` (in case of Debian) and `main`, `restricted`, `universe`, `multiverse`, `partner` (in case of Ubuntu).
 
-By default, the value of `REBOOT` is `True`. The remote machine will reboot after performing all operations and wait for it to come back for `REBOOT_TIMEOUT` which is 120 seconds.
+By default, the value of `REBOOT` is `True`. The remote machine will reboot after performing all operations and wait for it to come back for `REBOOT_TIMEOUT` which is 120 seconds. The reboot task pings SSH port defined in `SSH_PORT` which defaults to 22.
 
 You can add 3rd party package repositories to the system by using the following variables:
 * `SETUP_THIRD_PARTY_REPOS` (by default set to `False`).

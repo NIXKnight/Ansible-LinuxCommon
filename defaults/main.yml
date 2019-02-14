@@ -1,7 +1,7 @@
 ---
 # defaults file for Ansible-LinuxCommon
-CHANGE_HOSTNAME: True
-SETUP_SUDO: True
+CHANGE_HOSTNAME: False
+SETUP_SUDO: False
 DEBIAN_MIRROR: "ftp.debian.org"
 DEBIAN_SECURITY_MIRROR: "security.debian.org"
 UBUNTU_MIRROR: "archive.ubuntu.com"
@@ -9,7 +9,7 @@ UBUNTU_CANONICAL_PARTNER_MIRROR: "archive.canonical.com"
 DEBIAN_REPOS: "main contrib non-free"
 UBUNTU_REPOS: "main restricted universe multiverse"
 ENABLE_SRC_REPOS: False
-REBOOT: True
+REBOOT: False
 REBOOT_TIMEOUT: 120
 EXTRA_PACKAGES: []
 SETUP_THIRD_PARTY_REPOS: False
@@ -21,3 +21,4 @@ THIRD_PARTY_REPOS:
     URI: ""
     RELEASE: ""
     REPOS: ""
+SSH_PORT: 22

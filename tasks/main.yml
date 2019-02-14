@@ -36,9 +36,9 @@
 - name: Replace User profile (Debian/Ubuntu)
   copy:
     src: files/user-profile
-    dest: /home/{{ ansible_ssh_user }}/.profile
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    dest: /home/{{ ansible_user_id }}/.profile
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
   when: ansible_os_family == 'Debian'
 
 - name: Setup Official Package Repositories (Debian/Ubuntu)
@@ -103,9 +103,9 @@
     dest: /etc/sudoers.d/95-sudo-group
   when: (ansible_os_family == 'Debian') and (SETUP_SUDO)
 
-- name: Add User {{ ansible_ssh_user }} to sudo Group
+- name: Add User {{ ansible_user_id }} to sudo Group
   user:
-    name: '{{ ansible_ssh_user }}'
+    name: '{{ ansible_user_id }}'
     groups: sudo
     append: yes
   when: (ansible_os_family == 'Debian') and (SETUP_SUDO)
@@ -123,14 +123,15 @@
   ignore_errors: True
   when: REBOOT
 
-- name: Wait for Reboot
+- name: Wait for Server to Reboot
   become: False
-  connection: local
-  local_action: wait_for
-  args:
-    host: "{{ ansible_ssh_host }}"
-    port: "{{ ansible_port }}"
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ SSH_PORT }}"
     state: started
-    delay: 40
+    search_regex: OpenSSH
+    delay: 10
     timeout: "{{ REBOOT_TIMEOUT }}"
+  vars:
+    ansible_connection: local
   when: REBOOT
