@@ -1,6 +1,8 @@
 ---
 # defaults file for Ansible-LinuxCommon
 CHANGE_HOSTNAME: False
+CHANGE_TIMEZONE: False
+TIMEZONE: ""
 SETUP_SUDO: False
 DEBIAN_MIRROR: "ftp.debian.org"
 DEBIAN_SECURITY_MIRROR: "security.debian.org"

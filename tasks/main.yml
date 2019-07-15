@@ -11,6 +11,11 @@
     dest: /etc/hosts
   when: (CHANGE_HOSTNAME)
 
+- name: Change System Timezone
+  timezone:
+    name: "{{ TIMEZONE }}"
+  when: CHANGE_TIMEZONE
+
 - name: Replace bashrc (Debian/Ubuntu)
   copy:
     src: files/bash.bashrc

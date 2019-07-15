@@ -56,9 +56,11 @@ See example below on how to add 3rd party repositories.
 
 You may provide a list of extra packages that you want to install via `EXTRA_PACKAGES`. See example below.
 
+To change the timezone of the system, set `CHANGE_TIMEZONE` to `True` and give `TIMEZONE` a value e.g. `"Asia/Karachi"`.
+
 ## **Dependencies**
 
-This role doesn't depends on any other role for execution. The role is written to support both CD/DVD installs and perinstalled images (e.g. Amazon Machine Images) where `sudo` is already installed and configured. You can also use `su` method to become root if you don't have sudo installed.
+This role doesn't depends on any other role for execution. The role is written to support both CD/DVD installs and pre-installed images (e.g. Amazon Machine Images) where `sudo` is already installed and configured. You can also use `su` method to become root if you don't have sudo installed.
 
 ## **Example Playbook**
 
