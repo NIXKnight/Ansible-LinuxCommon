@@ -29,6 +29,8 @@ The variable `CHANGE_HOSTNAME` in `defaults/main.yml` based on which the role de
 
 Based on `SETUP_SUDO` variable in `defaults/main.yml`, the role can decide if `sudo` related actions should be performed. By defaults its set to `True`. You can change it to `False` if you don't want the role to perform `sudo` actions. See the example below.
 
+To modify shell environment set appropriate value for `MODIFY_SYSTEM_SHELL_ENV`, `MODIFY_SKEL`, `MODIFY_ROOT_SHELL_ENV` and `MODIFY_USER_SHELL_ENV`.
+
 `ENABLE_SRC_REPOS` controls if source repositories should be enabled or not. By default it is set to `False`.
 
 Variables:

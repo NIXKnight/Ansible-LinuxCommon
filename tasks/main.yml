@@ -43,7 +43,7 @@
   copy:
     src: files/bash.bashrc
     dest: /etc/bash.bashrc
-  when: ansible_os_family == 'Debian'
+  when: (ansible_os_family == 'Debian') and (MODIFY_SYSTEM_SHELL_ENV)
 
 - name: Replace Skeleton profile (Debian/Ubuntu)
   copy:
@@ -51,7 +51,7 @@
     dest: /etc/skel/.profile
     owner: root
     group: root
-  when: ansible_os_family == 'Debian'
+  when: (ansible_os_family == 'Debian') and (MODIFY_SKEL)
 
 - name: Replace root profile (Debian/Ubuntu)
   copy:
@@ -59,7 +59,7 @@
     dest: /root/.profile
     owner: root
     group: root
-  when: ansible_os_family == 'Debian'
+  when: (ansible_os_family == 'Debian') and (MODIFY_ROOT_SHELL_ENV)
 
 - name: Replace User profile (Debian/Ubuntu)
   copy:
@@ -67,7 +67,7 @@
     dest: /home/{{ ansible_user_id }}/.profile
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
-  when: ansible_os_family == 'Debian'
+  when: (ansible_os_family == 'Debian') and (MODIFY_USER_SHELL_ENV)
 
 - name: Setup Official Package Repositories (Debian/Ubuntu)
   template:
