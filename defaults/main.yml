@@ -3,6 +3,9 @@
 CHANGE_HOSTNAME: False
 CHANGE_TIMEZONE: False
 TIMEZONE: ""
+SET_LOCALES: False
+LOCALES: []
+DEFAULT_LOCALE: ""
 SETUP_SUDO: False
 DEBIAN_MIRROR: "ftp.debian.org"
 DEBIAN_SECURITY_MIRROR: "security.debian.org"

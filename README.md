@@ -58,6 +58,8 @@ You may provide a list of extra packages that you want to install via `EXTRA_PAC
 
 To change the timezone of the system, set `CHANGE_TIMEZONE` to `True` and give `TIMEZONE` a value e.g. `"Asia/Karachi"`.
 
+You can setup system locales. To do that, use the variables `SET_LOCALES`, `LOCALES` and `DEFAULT_LOCALE` as shown in the example below.
+
 ## **Dependencies**
 
 This role doesn't depends on any other role for execution. The role is written to support both CD/DVD installs and pre-installed images (e.g. Amazon Machine Images) where `sudo` is already installed and configured. You can also use `su` method to become root if you don't have sudo installed.
@@ -108,6 +110,19 @@ Add 3rd party repositories like Ondřej Surý's PHP repository and Syncthing:
           URI: "apt.syncthing.net"
           RELEASE: "syncthing"
           REPOS: "stable"
+```
+Setup locales:
+```yml
+- hosts: servers
+  gather_facts: True
+  roles:
+    - role: Ansible-LinuxCommon
+      SET_LOCALES: True
+      LOCALES:
+        - "en_US ISO-8859-1"
+        - "en_US.ISO-8859-15 ISO-8859-15"
+        - "en_US.UTF-8 UTF-8"
+      DEFAULT_LOCALE: "en_US.UTF-8 UTF-8"
 ```
 Install extra packages:
 ```yml

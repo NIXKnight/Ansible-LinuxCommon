@@ -16,6 +16,29 @@
     name: "{{ TIMEZONE }}"
   when: CHANGE_TIMEZONE
 
+- name: Ensure locales Package is Installed (Debian/Ubuntu)
+  apt:
+    pkg: "locales"
+    state: present
+    update_cache: yes
+  when: (SET_LOCALES) and (ansible_os_family == 'Debian')
+
+- name: Generate Locales
+  debconf:
+    name: locales
+    question: locales/locales_to_be_generated
+    value: "{{ LOCALES | join(',') }}"
+    vtype: multiselect
+  when: (SET_LOCALES) and (ansible_os_family == 'Debian')
+
+- name: Set Default Locale to {{ DEFAULT_LOCALE }}
+  debconf:
+    name: locales
+    question: locales/default_environment_locale
+    value: "{{ DEFAULT_LOCALE }}"
+    vtype: select
+  when: (SET_LOCALES) and (ansible_os_family == 'Debian')
+
 - name: Replace bashrc (Debian/Ubuntu)
   copy:
     src: files/bash.bashrc
