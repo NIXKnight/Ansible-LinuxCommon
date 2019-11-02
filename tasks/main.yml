@@ -11,6 +11,18 @@
     dest: /etc/hosts
   when: (CHANGE_HOSTNAME)
 
+- name: Modify Cloud-Init Configuration to Preserve Hostname
+  copy:
+    src: "files/99_preserve_hostname.cfg"
+    dest: "/etc/cloud/cloud.cfg.d/99_preserve_hostname.cfg"
+  when: CHANGE_HOSTNAME
+
+- name: Modify Cloud-Init Configuration to not Manage /etc/hosts
+  copy:
+    src: "files/99_manage_etc_hosts.cfg"
+    dest: "/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
+  when: CHANGE_HOSTNAME
+
 - name: Change System Timezone
   timezone:
     name: "{{ TIMEZONE }}"
@@ -25,60 +37,60 @@
 
 - name: Generate Locales
   debconf:
-    name: locales
-    question: locales/locales_to_be_generated
+    name: "locales"
+    question: "locales/locales_to_be_generated"
     value: "{{ LOCALES | join(',') }}"
     vtype: multiselect
   when: (SET_LOCALES) and (ansible_os_family == 'Debian')
 
 - name: Set Default Locale to {{ DEFAULT_LOCALE }}
   debconf:
-    name: locales
-    question: locales/default_environment_locale
+    name: "locales"
+    question: "locales/default_environment_locale"
     value: "{{ DEFAULT_LOCALE }}"
     vtype: select
   when: (SET_LOCALES) and (ansible_os_family == 'Debian')
 
 - name: Replace bashrc (Debian/Ubuntu)
   copy:
-    src: files/bash.bashrc
-    dest: /etc/bash.bashrc
+    src: "files/bash.bashrc"
+    dest: "/etc/bash.bashrc"
   when: (ansible_os_family == 'Debian') and (MODIFY_SYSTEM_SHELL_ENV)
 
 - name: Replace Skeleton profile (Debian/Ubuntu)
   copy:
-    src: files/user-profile
-    dest: /etc/skel/.profile
-    owner: root
-    group: root
+    src: "files/user-profile"
+    dest: "/etc/skel/.profile"
+    owner: "root"
+    group: "root"
   when: (ansible_os_family == 'Debian') and (MODIFY_SKEL)
 
 - name: Replace root profile (Debian/Ubuntu)
   copy:
-    src: files/root-profile
-    dest: /root/.profile
-    owner: root
-    group: root
+    src: "files/root-profile"
+    dest: "/root/.profile"
+    owner: "root"
+    group: "root"
   when: (ansible_os_family == 'Debian') and (MODIFY_ROOT_SHELL_ENV)
 
 - name: Replace User profile (Debian/Ubuntu)
   copy:
-    src: files/user-profile
-    dest: /home/{{ ansible_user_id }}/.profile
+    src: "files/user-profile"
+    dest: "/home/{{ ansible_user_id }}/.profile"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
   when: (ansible_os_family == 'Debian') and (MODIFY_USER_SHELL_ENV)
 
 - name: Setup Official Package Repositories (Debian/Ubuntu)
   template:
-    src: templates/{{ ansible_distribution }}.sources.list.j2
-    dest: /etc/apt/sources.list
+    src: "templates/{{ ansible_distribution }}.sources.list.j2"
+    dest: "/etc/apt/sources.list"
   when: ansible_os_family == 'Debian'
 
 - name: Setup 3rd Party Package Repositories (Debian/Ubuntu)
   template:
-    src: templates/3rd_party.list.j2
-    dest: /etc/apt/sources.list.d/{{ item.NAME }}.list
+    src: "templates/3rd_party.list.j2"
+    dest: "/etc/apt/sources.list.d/{{ item.NAME }}.list"
   with_items: "{{ THIRD_PARTY_REPOS }}"
   when: (SETUP_THIRD_PARTY_REPOS) and (ansible_os_family == 'Debian')
 
@@ -97,7 +109,7 @@
 
 - name: Remove Exim (Debian/Ubuntu)
   apt:
-    pkg: "{{ item }}"
+    pkg: "{{ exim_packages }}"
     state: absent
     purge: yes
   with_items:
@@ -115,33 +127,33 @@
 
 - name: Install libpam-systemd (for Debian Jessie)
   apt:
-    pkg: libpam-systemd
+    pkg: "libpam-systemd"
     state: present
   when: (ansible_os_family == 'Debian') and (ansible_distribution_release == 'jessie')
 
 - name: Install sudo
   apt:
-    pkg: sudo
+    pkg: "sudo"
     state: present
   when: (ansible_os_family == 'Debian') and (SETUP_SUDO)
 
 - name: Configure sudo Group Login Without Password
   template:
-    src: templates/95-sudo-group.j2
-    dest: /etc/sudoers.d/95-sudo-group
+    src: "templates/95-sudo-group.j2"
+    dest: "/etc/sudoers.d/95-sudo-group"
   when: (ansible_os_family == 'Debian') and (SETUP_SUDO)
 
 - name: Add User {{ ansible_user_id }} to sudo Group
   user:
     name: '{{ ansible_user_id }}'
-    groups: sudo
+    groups: "sudo"
     append: yes
   when: (ansible_os_family == 'Debian') and (SETUP_SUDO)
 
 - name: Configure vim editor
   copy:
-    src: files/vimrc.local
-    dest: /etc/vim/vimrc.local
+    src: "files/vimrc.local"
+    dest: "/etc/vim/vimrc.local"
   when: ansible_os_family == 'Debian'
 
 - name: Reboot
