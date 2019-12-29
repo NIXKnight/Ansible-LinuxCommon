@@ -9,19 +9,19 @@
   template:
     src: templates/hosts.j2
     dest: /etc/hosts
-  when: (CHANGE_HOSTNAME)
+  when: CHANGE_HOSTNAME
 
 - name: Modify Cloud-Init Configuration to Preserve Hostname
   copy:
     src: "files/99_preserve_hostname.cfg"
     dest: "/etc/cloud/cloud.cfg.d/99_preserve_hostname.cfg"
-  when: CHANGE_HOSTNAME
+  when: CHANGE_HOSTNAME and SETUP_AWS
 
 - name: Modify Cloud-Init Configuration to not Manage /etc/hosts
   copy:
     src: "files/99_manage_etc_hosts.cfg"
     dest: "/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
-  when: CHANGE_HOSTNAME
+  when: CHANGE_HOSTNAME and SETUP_AWS
 
 - name: Change System Timezone
   timezone:

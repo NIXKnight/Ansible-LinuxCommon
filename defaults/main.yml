@@ -1,6 +1,7 @@
 ---
 # defaults file for Ansible-LinuxCommon
 CHANGE_HOSTNAME: False
+SETUP_AWS: False
 CHANGE_TIMEZONE: False
 TIMEZONE: ""
 SET_LOCALES: False
