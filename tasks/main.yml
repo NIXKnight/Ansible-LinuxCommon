@@ -123,13 +123,13 @@
   with_items:
     - "{{ basic_packages }}"
     - "{{ EXTRA_PACKAGES }}"
-  when: ansible_os_family == 'Debian'
+  when: (INSTALL_PACKAGES) and (ansible_os_family == 'Debian')
 
 - name: Install libpam-systemd (for Debian Jessie)
   apt:
     pkg: "libpam-systemd"
     state: present
-  when: (ansible_os_family == 'Debian') and (ansible_distribution_release == 'jessie')
+  when: (INSTALL_PACKAGES) and (ansible_os_family == 'Debian') and (ansible_distribution_release == 'jessie')
 
 - name: Install sudo
   apt:
@@ -154,7 +154,7 @@
   copy:
     src: "files/vimrc.local"
     dest: "/etc/vim/vimrc.local"
-  when: ansible_os_family == 'Debian'
+  when: (INSTALL_PACKAGES) and (ansible_os_family == 'Debian')
 
 - name: Reboot
   shell: sleep 2 && shutdown -r now "Rebooting..."

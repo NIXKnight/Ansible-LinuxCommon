@@ -56,7 +56,7 @@ You can add 3rd party package repositories to the system by using the following 
 
 See example below on how to add 3rd party repositories.
 
-You may provide a list of extra packages that you want to install via `EXTRA_PACKAGES`. See example below.
+To install default (as defined in `vars/main.yml`) and extra packages set `INSTALL_PACKAGES` to true. You may provide a list of extra packages that you want to install via `EXTRA_PACKAGES`. See example below.
 
 To change the timezone of the system, set `CHANGE_TIMEZONE` to `True` and give `TIMEZONE` a value e.g. `"Asia/Karachi"`.
 
