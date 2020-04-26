@@ -1,7 +1,7 @@
 ---
 # defaults file for Ansible-LinuxCommon
 LC_CHANGE_HOSTNAME: False
-LC_SETUP_CLOUD_INIT: False
+LC_CLOUD_INIT_PRESERVE_HOSTNAME: False
 LC_CHANGE_TIMEZONE: False
 LC_TIMEZONE: ""
 LC_SET_LOCALES: False

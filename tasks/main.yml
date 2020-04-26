@@ -15,13 +15,13 @@
   copy:
     src: "files/etc/cloud/cloud.cfg.d/99_preserve_hostname.cfg"
     dest: "/etc/cloud/cloud.cfg.d/99_preserve_hostname.cfg"
-  when: LC_SETUP_CLOUD_INIT
+  when: LC_CLOUD_INIT_PRESERVE_HOSTNAME
 
 - name: Modify Cloud-Init Configuration to not Manage /etc/hosts
   copy:
     src: "files/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
     dest: "/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
-  when: LC_SETUP_CLOUD_INIT
+  when: LC_CLOUD_INIT_PRESERVE_HOSTNAME
 
 - name: Change System Timezone
   timezone:
