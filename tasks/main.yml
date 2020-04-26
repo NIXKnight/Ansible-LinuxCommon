@@ -3,175 +3,173 @@
 - name: Change Host Name
   hostname:
     name: "{{ inventory_hostname_short }}"
-  when: CHANGE_HOSTNAME
+  when: LC_CHANGE_HOSTNAME
 
-- name: Replace Hosts File (Debian/Ubuntu)
+- name: Replace Hosts File
   template:
-    src: templates/hosts.j2
-    dest: /etc/hosts
-  when: CHANGE_HOSTNAME
+    src: "templates/etc/hosts.j2"
+    dest: "/etc/hosts"
+  when: LC_CHANGE_HOSTNAME
 
 - name: Modify Cloud-Init Configuration to Preserve Hostname
   copy:
-    src: "files/99_preserve_hostname.cfg"
+    src: "files/etc/cloud/cloud.cfg.d/99_preserve_hostname.cfg"
     dest: "/etc/cloud/cloud.cfg.d/99_preserve_hostname.cfg"
-  when: CHANGE_HOSTNAME and SETUP_AWS
+  when: LC_SETUP_CLOUD_INIT
 
 - name: Modify Cloud-Init Configuration to not Manage /etc/hosts
   copy:
-    src: "files/99_manage_etc_hosts.cfg"
+    src: "files/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
     dest: "/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
-  when: CHANGE_HOSTNAME and SETUP_AWS
+  when: LC_SETUP_CLOUD_INIT
 
 - name: Change System Timezone
   timezone:
     name: "{{ TIMEZONE }}"
-  when: CHANGE_TIMEZONE
+  when: LC_CHANGE_TIMEZONE
 
-- name: Ensure locales Package is Installed (Debian/Ubuntu)
+- name: Ensure locales Package is Installed
   apt:
-    pkg: "locales"
+    name: "locales"
     state: present
     update_cache: yes
-  when: (SET_LOCALES) and (ansible_os_family == 'Debian')
+  when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
 
 - name: Generate Locales
   debconf:
     name: "locales"
     question: "locales/locales_to_be_generated"
-    value: "{{ LOCALES | join(',') }}"
+    value: "{{ LC_LOCALES | join(',') }}"
     vtype: multiselect
-  when: (SET_LOCALES) and (ansible_os_family == 'Debian')
+  when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
 
 - name: Set Default Locale to {{ DEFAULT_LOCALE }}
   debconf:
     name: "locales"
     question: "locales/default_environment_locale"
-    value: "{{ DEFAULT_LOCALE }}"
+    value: "{{ LC_DEFAULT_LOCALE }}"
     vtype: select
-  when: (SET_LOCALES) and (ansible_os_family == 'Debian')
+  when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
 
-- name: Replace bashrc (Debian/Ubuntu)
+- name: Replace bashrc
   copy:
-    src: "files/bash.bashrc"
+    src: "files/etc/bash.bashrc"
     dest: "/etc/bash.bashrc"
-  when: (ansible_os_family == 'Debian') and (MODIFY_SYSTEM_SHELL_ENV)
+  when: (ansible_os_family == 'Debian') and (LC_MODIFY_SYSTEM_SHELL_ENV)
 
-- name: Replace Skeleton profile (Debian/Ubuntu)
+- name: Replace Skeleton profile
   copy:
-    src: "files/user-profile"
+    src: "files/root/.profile"
     dest: "/etc/skel/.profile"
     owner: "root"
     group: "root"
-  when: (ansible_os_family == 'Debian') and (MODIFY_SKEL)
+  when: (ansible_os_family == 'Debian') and (LC_MODIFY_SKEL)
 
-- name: Replace root profile (Debian/Ubuntu)
+- name: Replace root profile
   copy:
-    src: "files/root-profile"
+    src: "files/root/.profile"
     dest: "/root/.profile"
     owner: "root"
     group: "root"
-  when: (ansible_os_family == 'Debian') and (MODIFY_ROOT_SHELL_ENV)
+  when: (ansible_os_family == 'Debian') and (LC_MODIFY_ROOT_SHELL_ENV)
 
-- name: Replace User profile (Debian/Ubuntu)
+- name: Replace User profile
   copy:
-    src: "files/user-profile"
+    src: "files/home/user/.profile"
     dest: "/home/{{ ansible_user_id }}/.profile"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
-  when: (ansible_os_family == 'Debian') and (MODIFY_USER_SHELL_ENV)
+  when: (ansible_os_family == 'Debian') and (LC_MODIFY_USER_SHELL_ENV)
 
-- name: Setup Official Package Repositories (Debian/Ubuntu)
+- name: Setup Official Package Repositories
   template:
-    src: "templates/{{ ansible_distribution }}.sources.list.j2"
+    src: "templates/etc/apt/{{ ansible_distribution }}.sources.list.j2"
     dest: "/etc/apt/sources.list"
   when: ansible_os_family == 'Debian'
 
-- name: Setup 3rd Party Package Repositories (Debian/Ubuntu)
+- name: Setup 3rd Party Package Repositories
   template:
-    src: "templates/3rd_party.list.j2"
+    src: "templates/etc/apt/sources.list.d/3rd_party.list.j2"
     dest: "/etc/apt/sources.list.d/{{ item.NAME }}.list"
-  with_items: "{{ THIRD_PARTY_REPOS }}"
-  when: (SETUP_THIRD_PARTY_REPOS) and (ansible_os_family == 'Debian')
+  with_items: "{{ LC_THIRD_PARTY_REPOS }}"
+  when: (LC_SETUP_THIRD_PARTY_REPOS) and (ansible_distribution == 'Debian')
 
 - name: Add 3rd Party Repository Keys
   apt_key:
     url: "{{ item }}"
     state: present
-  with_items: "{{ THIRD_PARTY_REPOS_KEYS }}"
-  when: (SETUP_THIRD_PARTY_REPOS) and (ansible_os_family == 'Debian')
+  with_items: "{{ LC_THIRD_PARTY_REPOS_KEYS }}"
+  when: (LC_SETUP_THIRD_PARTY_REPOS) and (ansible_distribution == 'Debian')
 
-- name: Install Updates (Debian/Ubuntu)
+- name: Install Updates
   apt:
     upgrade: dist
     update_cache: yes
   when: ansible_os_family == 'Debian'
 
-- name: Remove Exim (Debian/Ubuntu)
+- name: Remove Exim
   apt:
-    pkg: "{{ exim_packages }}"
+    name: "{{ lc_exim_packages }}"
     state: absent
     purge: yes
-  with_items:
-    - "{{ exim_packages }}"
   when: ansible_os_family == 'Debian'
 
 - name: Install Packages
   apt:
-    pkg: "{{ item }}"
+    name: "{{ item }}"
     state: present
   with_items:
-    - "{{ basic_packages }}"
-    - "{{ EXTRA_PACKAGES }}"
-  when: (INSTALL_PACKAGES) and (ansible_os_family == 'Debian')
+    - "{{ lc_basic_packages }}"
+    - "{{ LC_EXTRA_PACKAGES }}"
+  when: (LC_INSTALL_PACKAGES) and (ansible_os_family == 'Debian')
 
 - name: Install libpam-systemd (for Debian Jessie)
   apt:
-    pkg: "libpam-systemd"
+    name: "libpam-systemd"
     state: present
-  when: (INSTALL_PACKAGES) and (ansible_os_family == 'Debian') and (ansible_distribution_release == 'jessie')
+  when: (LC_INSTALL_PACKAGES) and (ansible_os_family == 'Debian') and (ansible_distribution_release == 'jessie')
 
 - name: Install sudo
   apt:
-    pkg: "sudo"
+    name: "sudo"
     state: present
-  when: (ansible_os_family == 'Debian') and (SETUP_SUDO)
+  when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
 
 - name: Configure sudo Group Login Without Password
   template:
-    src: "templates/95-sudo-group.j2"
+    src: "templates/etc/sudoers.d/95-sudo-group.j2"
     dest: "/etc/sudoers.d/95-sudo-group"
-  when: (ansible_os_family == 'Debian') and (SETUP_SUDO)
+  when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
 
 - name: Add User {{ ansible_user_id }} to sudo Group
   user:
     name: '{{ ansible_user_id }}'
     groups: "sudo"
     append: yes
-  when: (ansible_os_family == 'Debian') and (SETUP_SUDO)
+  when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
 
-- name: Configure vim editor
+- name: Configure vim Editor
   copy:
-    src: "files/vimrc.local"
+    src: "files/etc/vim/vimrc.local"
     dest: "/etc/vim/vimrc.local"
-  when: (INSTALL_PACKAGES) and (ansible_os_family == 'Debian')
+  when: (ansible_os_family == 'Debian')
 
 - name: Reboot
   shell: sleep 2 && shutdown -r now "Rebooting..."
   async: 1
   poll: 0
   ignore_errors: True
-  when: REBOOT
+  when: LC_REBOOT
 
 - name: Wait for Server to Reboot
   become: False
   wait_for:
     host: "{{ ansible_host }}"
-    port: "{{ SSH_PORT }}"
+    port: "{{ LC_SSH_PORT }}"
     state: started
     search_regex: OpenSSH
     delay: 10
-    timeout: "{{ REBOOT_TIMEOUT }}"
+    timeout: "{{ LC_REBOOT_TIMEOUT }}"
   vars:
     ansible_connection: local
-  when: REBOOT
+  when: LC_REBOOT

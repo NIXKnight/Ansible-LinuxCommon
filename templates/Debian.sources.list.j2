@@ -1,8 +1,0 @@
-deb http://{{ DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }} {{ DEBIAN_REPOS }}
-{% if ENABLE_SRC_REPOS == True %}deb-src http://{{ DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }} {{ DEBIAN_REPOS }}{% else %}# deb-src http://{{ DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }} {{ DEBIAN_REPOS }}{% endif %}
-
-deb http://{{ DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }}-updates {{ DEBIAN_REPOS }}
-{% if ENABLE_SRC_REPOS == True %}deb-src http://{{ DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }}-updates {{ DEBIAN_REPOS }}{% else %}# deb-src http://{{ DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }}-updates {{ DEBIAN_REPOS }}{% endif %}
-
-deb http://{{ DEBIAN_SECURITY_MIRROR }}/ {{ ansible_distribution_release }}/updates {{ DEBIAN_REPOS }}
-{% if ENABLE_SRC_REPOS == True %}deb-src http://{{ DEBIAN_SECURITY_MIRROR }}/ {{ ansible_distribution_release }}/updates {{ DEBIAN_REPOS }}{% else %}# deb-src http://{{ DEBIAN_SECURITY_MIRROR }}/ {{ ansible_distribution_release }}/updates {{ DEBIAN_REPOS }}{% endif %}

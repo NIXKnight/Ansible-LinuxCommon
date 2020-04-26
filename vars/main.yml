@@ -1,4 +1,4 @@
-basic_packages:
+lc_basic_packages:
   - apt-transport-https
   - htop
   - iotop
@@ -13,7 +13,7 @@ basic_packages:
   - mtr-tiny
   - git
   - unzip
-exim_packages:
+lc_exim_packages:
   - exim4
   - exim4-base
   - exim4-config

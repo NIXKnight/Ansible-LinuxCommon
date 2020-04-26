@@ -1,0 +1,8 @@
+deb http://{{ LC_DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }} {{ LC_DEBIAN_REPOS }}
+{% if LC_ENABLE_SRC_REPOS == True %}deb-src http://{{ LC_DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }} {{ LC_DEBIAN_REPOS }}{% else %}# deb-src http://{{ LC_DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }} {{ LC_DEBIAN_REPOS }}{% endif %}
+
+deb http://{{ LC_DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }}-updates {{ LC_DEBIAN_REPOS }}
+{% if LC_ENABLE_SRC_REPOS == True %}deb-src http://{{ LC_DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }}-updates {{ LC_DEBIAN_REPOS }}{% else %}# deb-src http://{{ LC_DEBIAN_MIRROR }}/debian {{ ansible_distribution_release }}-updates {{ LC_DEBIAN_REPOS }}{% endif %}
+
+deb http://{{ LC_DEBIAN_SECURITY_MIRROR }}/ {{ ansible_distribution_release }}/updates {{ LC_DEBIAN_REPOS }}
+{% if LC_ENABLE_SRC_REPOS == True %}deb-src http://{{ LC_DEBIAN_SECURITY_MIRROR }}/ {{ ansible_distribution_release }}/updates {{ LC_DEBIAN_REPOS }}{% else %}# deb-src http://{{ LC_DEBIAN_SECURITY_MIRROR }}/ {{ ansible_distribution_release }}/updates {{ LC_DEBIAN_REPOS }}{% endif %}

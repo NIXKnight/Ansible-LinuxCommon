@@ -25,42 +25,42 @@ At the moment this role is being written for Debian based distributions e.g. Deb
 
 ## **Role Variables**
 
-The variable `CHANGE_HOSTNAME` in `defaults/main.yml` based on which the role decides wether to change the hostname or not. By default it is set to `True`. If you don't want to change change hostname, you can set it to `False`. See the example below. The role sets `inventory_hostname_short` as the hostname.
+The variable `LC_CHANGE_HOSTNAME` in `defaults/main.yml` based on which the role decides wether to change the hostname or not. By default it is set to `True`. If you don't want to change change hostname, you can set it to `False`. See the example below. The role sets `inventory_hostname_short` as the hostname.
 
-Based on `SETUP_SUDO` variable in `defaults/main.yml`, the role can decide if `sudo` related actions should be performed. By defaults its set to `True`. You can change it to `False` if you don't want the role to perform `sudo` actions. See the example below.
+Based on `LC_SETUP_SUDO` variable in `defaults/main.yml`, the role can decide if `sudo` related actions should be performed. By defaults its set to `True`. You can change it to `False` if you don't want the role to perform `sudo` actions. See the example below.
 
-To modify shell environment set appropriate value for `MODIFY_SYSTEM_SHELL_ENV`, `MODIFY_SKEL`, `MODIFY_ROOT_SHELL_ENV` and `MODIFY_USER_SHELL_ENV`.
+To modify shell environment set appropriate value for `LC_MODIFY_SYSTEM_SHELL_ENV`, `LC_MODIFY_SKEL`, `LC_MODIFY_ROOT_SHELL_ENV` and `LC_MODIFY_USER_SHELL_ENV`.
 
-`ENABLE_SRC_REPOS` controls if source repositories should be enabled or not. By default it is set to `False`.
+`LC_ENABLE_SRC_REPOS` controls if source repositories should be enabled or not. By default it is set to `False`.
 
 Variables:
-* `DEBIAN_MIRROR`
-* `DEBIAN_SECURITY_MIRROR`
-* `UBUNTU_MIRROR`
-* `UBUNTU_CANONICAL_PARTNER_MIRROR`
+* `LC_DEBIAN_MIRROR`
+* `LC_DEBIAN_SECURITY_MIRROR`
+* `LC_UBUNTU_MIRROR`
+* `LC_UBUNTU_CANONICAL_PARTNER_MIRROR`
 
 Can be used to change mirrors for package repositories. See `defaults/main.yml` for their default values.
 
 By default, variables:
-* `DEBIAN_REPOS`
-* `UBUNTU_REPOS`
+* `LC_DEBIAN_REPOS`
+* `LC_UBUNTU_REPOS`
 
 Are used to enable repositories `main`, `contrib`, `non-free` (in case of Debian) and `main`, `restricted`, `universe`, `multiverse`, `partner` (in case of Ubuntu).
 
-By default, the value of `REBOOT` is `True`. The remote machine will reboot after performing all operations and wait for it to come back for `REBOOT_TIMEOUT` which is 120 seconds. The reboot task pings SSH port defined in `SSH_PORT` which defaults to 22.
+By default, the value of `LC_REBOOT` is `True`. The remote machine will reboot after performing all operations and wait for it to come back for `LC_REBOOT_TIMEOUT` which is 120 seconds. The reboot task pings SSH port defined in `LC_SSH_PORT` which defaults to 22.
 
 You can add 3rd party package repositories to the system by using the following variables:
-* `SETUP_THIRD_PARTY_REPOS` (by default set to `False`).
-* `THIRD_PARTY_REPOS_KEYS`.
-* `THIRD_PARTY_REPOS`.
+* `LC_SETUP_THIRD_PARTY_REPOS` (by default set to `False`).
+* `LC_THIRD_PARTY_REPOS_KEYS`.
+* `LC_THIRD_PARTY_REPOS`.
 
 See example below on how to add 3rd party repositories.
 
-To install default (as defined in `vars/main.yml`) and extra packages set `INSTALL_PACKAGES` to true. You may provide a list of extra packages that you want to install via `EXTRA_PACKAGES`. See example below.
+To install default (as defined in `vars/main.yml`) and extra packages set `LC_INSTALL_PACKAGES` to true. You may provide a list of extra packages that you want to install via `LC_EXTRA_PACKAGES`. See example below.
 
-To change the timezone of the system, set `CHANGE_TIMEZONE` to `True` and give `TIMEZONE` a value e.g. `"Asia/Karachi"`.
+To change the timezone of the system, set `LC_CHANGE_TIMEZONE` to `True` and give `LC_TIMEZONE` a value e.g. `"Asia/Karachi"`.
 
-You can setup system locales. To do that, use the variables `SET_LOCALES`, `LOCALES` and `DEFAULT_LOCALE` as shown in the example below.
+You can setup system locales. To do that, use the variables `LC_SET_LOCALES`, `LC_LOCALES` and `LC_DEFAULT_LOCALE` as shown in the example below.
 
 ## **Dependencies**
 
@@ -82,14 +82,14 @@ If you don't want to change hostname:
 - hosts: servers
   gather_facts: True
   roles:
-      - { role: Ansible-LinuxCommon, CHANGE_HOSTNAME: False }
+      - { role: Ansible-LinuxCommon, LC_CHANGE_HOSTNAME: False }
 ```
 If you don't want to add the user to password-less `sudo` or if its already there:
 ```yml
 - hosts: servers
   gather_facts: True
   roles:
-      - { role: Ansible-LinuxCommon, SETUP_SUDO: False }
+      - { role: Ansible-LinuxCommon, LC_SETUP_SUDO: False }
 ```
 Add 3rd party repositories like Ondřej Surý's PHP repository and Syncthing:
 ```yml
@@ -97,11 +97,11 @@ Add 3rd party repositories like Ondřej Surý's PHP repository and Syncthing:
   gather_facts: True
   roles:
     - role: Ansible-LinuxCommon
-      SETUP_3RD_PARTY_REPOS: True
-      THIRD_PARTY_REPOS_KEYS:
+      LC_SETUP_3RD_PARTY_REPOS: True
+      LC_THIRD_PARTY_REPOS_KEYS:
         - "https://packages.sury.org/php/apt.gpg"
         - "https://syncthing.net/release-key.txt"
-      THIRD_PARTY_REPOS:
+      LC_THIRD_PARTY_REPOS:
         - NAME: "php"
           SCHEME: "https"
           URI: "packages.sury.org/php"
@@ -119,12 +119,12 @@ Setup locales:
   gather_facts: True
   roles:
     - role: Ansible-LinuxCommon
-      SET_LOCALES: True
-      LOCALES:
+      LC_SET_LOCALES: True
+      LC_LOCALES:
         - "en_US ISO-8859-1"
         - "en_US.ISO-8859-15 ISO-8859-15"
         - "en_US.UTF-8 UTF-8"
-      DEFAULT_LOCALE: "en_US.UTF-8 UTF-8"
+      LC_DEFAULT_LOCALE: "en_US.UTF-8 UTF-8"
 ```
 Install extra packages:
 ```yml
@@ -132,9 +132,9 @@ Install extra packages:
   gather_facts: True
   roles:
       - role: Ansible-LinuxCommon
-        SETUP_SUDO: False
-        CHANGE_HOSTNAME: False
-        EXTRA_PACKAGES:
+        LC_SETUP_SUDO: False
+        LC_CHANGE_HOSTNAME: False
+        LC_EXTRA_PACKAGES:
           - iptstate
           - iptables-persistent
 ```
