@@ -62,6 +62,8 @@ To change the timezone of the system, set `LC_CHANGE_TIMEZONE` to `True` and giv
 
 You can setup system locales. To do that, use the variables `LC_SET_LOCALES`, `LC_LOCALES` and `LC_DEFAULT_LOCALE` as shown in the example below.
 
+Set kernel parameters in `sysctl.conf` by setting variable `LC_SET_KERNEL_PARAMETERS` to `True` and setting values in `LC_KERNEL_PARAMETERS`.
+
 ## **Dependencies**
 
 This role doesn't depends on any other role for execution. The role is written to support both CD/DVD installs and pre-installed images (e.g. Amazon Machine Images) where `sudo` is already installed and configured. You can also use `su` method to become root if you don't have sudo installed.
@@ -137,6 +139,17 @@ Install extra packages:
         LC_EXTRA_PACKAGES:
           - iptstate
           - iptables-persistent
+```
+Modify kernel parameters:
+```yml
+- hosts: servers
+  gather_facts: True
+  roles:
+      - role: Ansible-LinuxCommon
+        LC_SET_KERNEL_PARAMETERS: True
+        LC_KERNEL_PARAMETERS:
+          - { name: "vm.swappiness", value: 10, state: present }
+          - { name: "net.core.somaxconn", value: 65535, state: present }
 ```
 ## **License**
 

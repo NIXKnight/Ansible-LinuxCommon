@@ -154,6 +154,15 @@
     dest: "/etc/vim/vimrc.local"
   when: (ansible_os_family == 'Debian')
 
+- name: Modify Kernel Parameters
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: "{{ item.state }}"
+    reload: yes
+  with_items: "{{ LC_KERNEL_PARAMETERS }}"
+  when: LC_SET_KERNEL_PARAMETERS
+
 - name: Reboot
   shell: sleep 2 && shutdown -r now "Rebooting..."
   async: 1
