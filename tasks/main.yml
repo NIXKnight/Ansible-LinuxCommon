@@ -43,7 +43,7 @@
     vtype: multiselect
   when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
 
-- name: Set Default Locale to {{ DEFAULT_LOCALE }}
+- name: Set Default Locale to {{ LC_DEFAULT_LOCALE }}
   debconf:
     name: "locales"
     question: "locales/default_environment_locale"
