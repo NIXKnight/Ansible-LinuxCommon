@@ -171,7 +171,6 @@
   when: LC_REBOOT
 
 - name: Wait for Server to Reboot
-  become: False
   wait_for:
     host: "{{ ansible_host }}"
     port: "{{ LC_SSH_PORT }}"
@@ -181,4 +180,5 @@
     timeout: "{{ LC_REBOOT_TIMEOUT }}"
   vars:
     ansible_connection: local
+    ansible_python_interpreter: "{{ LC_LOCAL_PYTHON_INTERPRETER }}"
   when: LC_REBOOT
