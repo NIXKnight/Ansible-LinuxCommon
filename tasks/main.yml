@@ -85,7 +85,7 @@
   template:
     src: "templates/etc/apt/{{ ansible_distribution }}.sources.list.j2"
     dest: "/etc/apt/sources.list"
-  when: ansible_os_family == 'Debian'
+  when: (ansible_os_family == 'Debian') and (LC_CHANGES_APT_DEFAULT_SOURCES_LIST)
 
 - name: Setup 3rd Party Package Repositories
   template:
