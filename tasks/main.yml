@@ -51,6 +51,15 @@
     vtype: select
   when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
 
+- name: Set debconf Values
+  debconf:
+    name: "{{ item.name }}"
+    question: "{{ item.question }}"
+    value: "{{ item.value }}"
+    vtype: "{{ item.vtype }}"
+  with_items: "{{ LC_DEBCONF_VALUES }}"
+  when: (LC_SET_DEBCONF_VALUES) and (ansible_os_family == 'Debian')
+
 - name: Replace bashrc
   copy:
     src: "files/etc/bash.bashrc"
