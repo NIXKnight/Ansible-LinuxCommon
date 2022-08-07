@@ -113,23 +113,23 @@
 
 - name: Install Packages
   apt:
-    name: "{{ item }}"
+    pkg: "{{ lc_basic_packages + LC_EXTRA_PACKAGES }}"
     state: present
-  with_items:
-    - "{{ lc_basic_packages }}"
-    - "{{ LC_EXTRA_PACKAGES }}"
+    update_cache: yes
   when: (LC_INSTALL_PACKAGES) and (ansible_os_family == 'Debian')
 
 - name: Install libpam-systemd (for Debian Jessie)
   apt:
     name: "libpam-systemd"
     state: present
+    update_cache: yes
   when: (LC_INSTALL_PACKAGES) and (ansible_os_family == 'Debian') and (ansible_distribution_release == 'jessie')
 
 - name: Install sudo
   apt:
     name: "sudo"
     state: present
+    update_cache: yes
   when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
 
 - name: Configure sudo Group Login Without Password
