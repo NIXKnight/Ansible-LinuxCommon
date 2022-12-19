@@ -16,12 +16,11 @@
     name: "{{ LC_TIMEZONE }}"
   when: LC_CHANGE_TIMEZONE
 
-- name: Ensure locales Package is Installed
-  apt:
-    name: "locales"
-    state: present
-    update_cache: yes
-  when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
+- name: Setup Official Package Repositories
+  template:
+    src: "templates/etc/apt/{{ ansible_distribution }}.sources.list.j2"
+    dest: "/etc/apt/sources.list"
+  when: (ansible_os_family == 'Debian') and (LC_CHANGES_APT_DEFAULT_SOURCES_LIST)
 
 - name: Generate Locales
   debconf:
@@ -37,6 +36,13 @@
     question: "locales/default_environment_locale"
     value: "{{ LC_DEFAULT_LOCALE }}"
     vtype: select
+  when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
+
+- name: Ensure locales Package is Installed
+  apt:
+    name: "locales"
+    state: present
+    update_cache: yes
   when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
 
 - name: Set debconf Values
