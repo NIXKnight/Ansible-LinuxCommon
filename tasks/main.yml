@@ -1,29 +1,29 @@
 ---
 # tasks file for Ansible-LinuxCommon
 - name: Change Host Name
-  hostname:
+  ansible.builtin.hostname:
     name: "{{ inventory_hostname_short }}"
   when: LC_CHANGE_HOSTNAME
 
 - name: Replace Hosts File
-  template:
+  ansible.builtin.template:
     src: "templates/etc/hosts.j2"
     dest: "/etc/hosts"
   when: LC_CHANGE_HOSTNAME
 
 - name: Change System Timezone
-  timezone:
+  community.general.timezone:
     name: "{{ LC_TIMEZONE }}"
   when: LC_CHANGE_TIMEZONE
 
 - name: Setup Official Package Repositories
-  template:
+  ansible.builtin.template:
     src: "templates/etc/apt/{{ ansible_distribution }}.sources.list.j2"
     dest: "/etc/apt/sources.list"
   when: (ansible_os_family == 'Debian') and (LC_CHANGES_APT_DEFAULT_SOURCES_LIST)
 
-- name: Generate Locales
-  debconf:
+- name: Locales to be Generated
+  ansible.builtin.debconf:
     name: "locales"
     question: "locales/locales_to_be_generated"
     value: "{{ LC_LOCALES | join(',') }}"
@@ -31,7 +31,7 @@
   when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
 
 - name: Set Default Locale to {{ LC_DEFAULT_LOCALE }}
-  debconf:
+  ansible.builtin.debconf:
     name: "locales"
     question: "locales/default_environment_locale"
     value: "{{ LC_DEFAULT_LOCALE }}"
@@ -39,14 +39,14 @@
   when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
 
 - name: Ensure locales Package is Installed
-  apt:
+  ansible.builtin.apt:
     name: "locales"
     state: present
     update_cache: yes
   when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
 
 - name: Set debconf Values
-  debconf:
+  ansible.builtin.debconf:
     name: "{{ item.name }}"
     question: "{{ item.question }}"
     value: "{{ item.value }}"
@@ -55,13 +55,13 @@
   when: (LC_SET_DEBCONF_VALUES) and (ansible_os_family == 'Debian')
 
 - name: Replace bashrc
-  copy:
+  ansible.builtin.copy:
     src: "files/etc/bash.bashrc"
     dest: "/etc/bash.bashrc"
   when: (ansible_os_family == 'Debian') and (LC_MODIFY_SYSTEM_SHELL_ENV)
 
 - name: Replace Skeleton profile
-  copy:
+  ansible.builtin.copy:
     src: "files/root/.profile"
     dest: "/etc/skel/.profile"
     owner: "root"
@@ -69,7 +69,7 @@
   when: (ansible_os_family == 'Debian') and (LC_MODIFY_SKEL)
 
 - name: Replace root profile
-  copy:
+  ansible.builtin.copy:
     src: "files/root/.profile"
     dest: "/root/.profile"
     owner: "root"
@@ -77,7 +77,7 @@
   when: (ansible_os_family == 'Debian') and (LC_MODIFY_ROOT_SHELL_ENV)
 
 - name: Replace User profile
-  copy:
+  ansible.builtin.copy:
     src: "files/home/user/.profile"
     dest: "/home/{{ ansible_user_id }}/.profile"
     owner: "{{ ansible_user_id }}"
@@ -85,80 +85,73 @@
   when: (ansible_os_family == 'Debian') and (LC_MODIFY_USER_SHELL_ENV)
 
 - name: Setup Official Package Repositories
-  template:
+  ansible.builtin.template:
     src: "templates/etc/apt/{{ ansible_distribution }}.sources.list.j2"
     dest: "/etc/apt/sources.list"
   when: (ansible_os_family == 'Debian') and (LC_CHANGES_APT_DEFAULT_SOURCES_LIST)
 
 - name: Setup 3rd Party Package Repositories
-  template:
+  ansible.builtin.template:
     src: "templates/etc/apt/sources.list.d/3rd_party.list.j2"
     dest: "/etc/apt/sources.list.d/{{ item.NAME }}.list"
   with_items: "{{ LC_THIRD_PARTY_REPOS }}"
   when: (LC_SETUP_THIRD_PARTY_REPOS) and (ansible_distribution == 'Debian')
 
 - name: Add 3rd Party Repository Keys
-  apt_key:
+  ansible.builtin.apt_key:
     url: "{{ item }}"
     state: present
   with_items: "{{ LC_THIRD_PARTY_REPOS_KEYS }}"
   when: (LC_SETUP_THIRD_PARTY_REPOS) and (ansible_distribution == 'Debian')
 
 - name: Install Updates
-  apt:
+  ansible.builtin.apt:
     upgrade: dist
     update_cache: yes
   when: ansible_os_family == 'Debian'
 
 - name: Remove Exim
-  apt:
+  ansible.builtin.apt:
     name: "{{ lc_exim_packages }}"
     state: absent
     purge: yes
   when: ansible_os_family == 'Debian'
 
 - name: Install Packages
-  apt:
+  ansible.builtin.apt:
     pkg: "{{ lc_basic_packages + LC_EXTRA_PACKAGES }}"
     state: present
     update_cache: yes
   when: (LC_INSTALL_PACKAGES) and (ansible_os_family == 'Debian')
 
-- name: Install libpam-systemd (for Debian Jessie)
-  apt:
-    name: "libpam-systemd"
-    state: present
-    update_cache: yes
-  when: (LC_INSTALL_PACKAGES) and (ansible_os_family == 'Debian') and (ansible_distribution_release == 'jessie')
-
 - name: Install sudo
-  apt:
+  ansible.builtin.apt:
     name: "sudo"
     state: present
     update_cache: yes
   when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
 
 - name: Configure sudo Group Login Without Password
-  template:
+  ansible.builtin.template:
     src: "templates/etc/sudoers.d/95-sudo-group.j2"
     dest: "/etc/sudoers.d/95-sudo-group"
   when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
 
 - name: Add User {{ ansible_user_id }} to sudo Group
-  user:
+  ansible.builtin.user:
     name: '{{ ansible_user_id }}'
     groups: "sudo"
     append: yes
   when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
 
 - name: Configure vim Editor
-  copy:
+  ansible.builtin.copy:
     src: "files/etc/vim/vimrc.local"
     dest: "/etc/vim/vimrc.local"
   when: (ansible_os_family == 'Debian')
 
 - name: Modify Kernel Parameters
-  sysctl:
+  ansible.builtin.sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
     state: "{{ item.state }}"
@@ -167,25 +160,25 @@
   when: LC_SET_KERNEL_PARAMETERS
 
 - name: Modify Cloud-Init Configuration to Preserve Hostname
-  copy:
+  ansible.builtin.copy:
     src: "files/etc/cloud/cloud.cfg.d/99_preserve_hostname.cfg"
     dest: "/etc/cloud/cloud.cfg.d/99_preserve_hostname.cfg"
   when: LC_CLOUD_INIT_PRESERVE_HOSTNAME
 
 - name: Modify Cloud-Init Configuration to not Manage /etc/hosts
-  copy:
+  ansible.builtin.copy:
     src: "files/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
     dest: "/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
   when: LC_CLOUD_INIT_PRESERVE_HOSTNAME
 
 - name: Modify Cloud-Init Configuration to not Manage /etc/apt/sources.list
-  copy:
+  ansible.builtin.copy:
     src: "files/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
     dest: "/etc/cloud/cloud.cfg.d/99_manage_etc_hosts.cfg"
   when: LC_CLOUD_INIT_PRESERVE_SOURCES_LIST
 
 - name: Reboot
-  shell: sleep 2 && shutdown -r now "Rebooting..."
+  ansible.builtin.shell: sleep 2 && shutdown -r now "Rebooting..."
   async: 1
   poll: 0
   ignore_errors: True
@@ -193,7 +186,7 @@
 
 - name: Wait for Server to Reboot
   become: False
-  wait_for:
+  ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: "{{ LC_SSH_PORT }}"
     state: started
