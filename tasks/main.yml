@@ -20,7 +20,7 @@
   ansible.builtin.template:
     src: "templates/etc/apt/{{ ansible_distribution }}.sources.list.j2"
     dest: "/etc/apt/sources.list"
-  when: (ansible_os_family == 'Debian') and (LC_CHANGES_APT_DEFAULT_SOURCES_LIST)
+  when: LC_CHANGES_APT_DEFAULT_SOURCES_LIST
 
 - name: Locales to be Generated
   ansible.builtin.debconf:
@@ -28,7 +28,7 @@
     question: "locales/locales_to_be_generated"
     value: "{{ LC_LOCALES | join(',') }}"
     vtype: multiselect
-  when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
+  when: LC_SET_LOCALES
 
 - name: Set Default Locale to {{ LC_DEFAULT_LOCALE }}
   ansible.builtin.debconf:
@@ -36,14 +36,14 @@
     question: "locales/default_environment_locale"
     value: "{{ LC_DEFAULT_LOCALE }}"
     vtype: select
-  when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
+  when: LC_SET_LOCALES
 
 - name: Ensure locales Package is Installed
   ansible.builtin.apt:
     name: "locales"
     state: present
     update_cache: yes
-  when: (LC_SET_LOCALES) and (ansible_os_family == 'Debian')
+  when: LC_SET_LOCALES
 
 - name: Set debconf Values
   ansible.builtin.debconf:
@@ -52,13 +52,13 @@
     value: "{{ item.value }}"
     vtype: "{{ item.vtype }}"
   with_items: "{{ LC_DEBCONF_VALUES }}"
-  when: (LC_SET_DEBCONF_VALUES) and (ansible_os_family == 'Debian')
+  when: LC_SET_DEBCONF_VALUES
 
 - name: Replace bashrc
   ansible.builtin.copy:
     src: "files/etc/bash.bashrc"
     dest: "/etc/bash.bashrc"
-  when: (ansible_os_family == 'Debian') and (LC_MODIFY_SYSTEM_SHELL_ENV)
+  when: LC_MODIFY_SYSTEM_SHELL_ENV
 
 - name: Replace Skeleton profile
   ansible.builtin.copy:
@@ -66,7 +66,7 @@
     dest: "/etc/skel/.profile"
     owner: "root"
     group: "root"
-  when: (ansible_os_family == 'Debian') and (LC_MODIFY_SKEL)
+  when: LC_MODIFY_SKEL
 
 - name: Replace root profile
   ansible.builtin.copy:
@@ -74,7 +74,7 @@
     dest: "/root/.profile"
     owner: "root"
     group: "root"
-  when: (ansible_os_family == 'Debian') and (LC_MODIFY_ROOT_SHELL_ENV)
+  when: LC_MODIFY_ROOT_SHELL_ENV
 
 - name: Replace User profile
   ansible.builtin.copy:
@@ -82,73 +82,70 @@
     dest: "/home/{{ ansible_user_id }}/.profile"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
-  when: (ansible_os_family == 'Debian') and (LC_MODIFY_USER_SHELL_ENV)
+  when: LC_MODIFY_USER_SHELL_ENV
 
 - name: Setup Official Package Repositories
   ansible.builtin.template:
     src: "templates/etc/apt/{{ ansible_distribution }}.sources.list.j2"
     dest: "/etc/apt/sources.list"
-  when: (ansible_os_family == 'Debian') and (LC_CHANGES_APT_DEFAULT_SOURCES_LIST)
+  when: LC_CHANGES_APT_DEFAULT_SOURCES_LIST
 
 - name: Setup 3rd Party Package Repositories
   ansible.builtin.template:
     src: "templates/etc/apt/sources.list.d/3rd_party.list.j2"
     dest: "/etc/apt/sources.list.d/{{ item.NAME }}.list"
   with_items: "{{ LC_THIRD_PARTY_REPOS }}"
-  when: (LC_SETUP_THIRD_PARTY_REPOS) and (ansible_distribution == 'Debian')
+  when: LC_SETUP_THIRD_PARTY_REPOS
 
 - name: Add 3rd Party Repository Keys
   ansible.builtin.apt_key:
     url: "{{ item }}"
     state: present
   with_items: "{{ LC_THIRD_PARTY_REPOS_KEYS }}"
-  when: (LC_SETUP_THIRD_PARTY_REPOS) and (ansible_distribution == 'Debian')
+  when: LC_SETUP_THIRD_PARTY_REPOS
 
 - name: Install Updates
   ansible.builtin.apt:
     upgrade: dist
     update_cache: yes
-  when: ansible_os_family == 'Debian'
 
 - name: Remove Exim
   ansible.builtin.apt:
     name: "{{ lc_exim_packages }}"
     state: absent
     purge: yes
-  when: ansible_os_family == 'Debian'
 
 - name: Install Packages
   ansible.builtin.apt:
     pkg: "{{ lc_basic_packages + LC_EXTRA_PACKAGES }}"
     state: present
     update_cache: yes
-  when: (LC_INSTALL_PACKAGES) and (ansible_os_family == 'Debian')
+  when: LC_INSTALL_PACKAGES
 
 - name: Install sudo
   ansible.builtin.apt:
     name: "sudo"
     state: present
     update_cache: yes
-  when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
+  when: LC_SETUP_SUDO
 
 - name: Configure sudo Group Login Without Password
   ansible.builtin.template:
     src: "templates/etc/sudoers.d/95-sudo-group.j2"
     dest: "/etc/sudoers.d/95-sudo-group"
-  when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
+  when: LC_SETUP_SUDO
 
 - name: Add User {{ ansible_user_id }} to sudo Group
   ansible.builtin.user:
     name: '{{ ansible_user_id }}'
     groups: "sudo"
     append: yes
-  when: (ansible_os_family == 'Debian') and (LC_SETUP_SUDO)
+  when: LC_SETUP_SUDO
 
 - name: Configure vim Editor
   ansible.builtin.copy:
     src: "files/etc/vim/vimrc.local"
     dest: "/etc/vim/vimrc.local"
-  when: (ansible_os_family == 'Debian')
 
 - name: Modify Kernel Parameters
   ansible.builtin.sysctl:
