@@ -18,12 +18,12 @@ LC_MODIFY_SKEL: False
 LC_MODIFY_ROOT_SHELL_ENV: False
 LC_MODIFY_USER_SHELL_ENV: False
 LC_INSTALL_PACKAGES: False
-LC_DEBIAN_MIRROR: "ftp.debian.org"
-LC_DEBIAN_SECURITY_MIRROR: "security.debian.org"
-LC_UBUNTU_MIRROR: "archive.ubuntu.com"
-LC_UBUNTU_CANONICAL_PARTNER_MIRROR: "archive.canonical.com"
-LC_DEBIAN_REPOS: "main contrib non-free"
-LC_UBUNTU_REPOS: "main restricted universe multiverse"
+LC_APT_DEBIAN_MIRROR: "deb.debian.org"
+LC_APT_UBUNTU_MIRROR: "archive.ubuntu.com"
+LC_APT_UBUNTU_SECURITY_MIRROR: "security.ubuntu.com"
+LC_APT_DEBIAN_COMPONENTS: "main contrib non-free"
+LC_APT_UBUNTU_COMPONENTS: "main restricted universe multiverse"
+LC_APT_KEY_LOCAL_PATH: "/usr/share/keyrings/{{ ansible_distribution | lower }}-archive-keyring.gpg"
 LC_ENABLE_SRC_REPOS: False
 LC_REBOOT: False
 LC_REBOOT_TIMEOUT: 120
@@ -35,8 +35,10 @@ LC_THIRD_PARTY_REPOS:
   - NAME: ""
     SCHEME: ""
     URI: ""
-    RELEASE: ""
-    REPOS: ""
+    SUITES: ""
+    COMPONENTS: ""
+    APT_KEY_URL: ""
+    APT_KEY_LOCAL_PATH: ""
 LC_SSH_PORT: 22
 LC_SET_KERNEL_PARAMETERS: False
 LC_KERNEL_PARAMETERS: []

@@ -1,0 +1,11 @@
+Types: deb
+URIs: http://{{ LC_APT_UBUNTU_MIRROR }}/ubuntu
+Suites: {{ ansible_distribution_release }} {{ ansible_distribution_release }}-updates
+Components: {{ LC_APT_UBUNTU_COMPONENTS }}
+Signed-By: {{ LC_APT_KEY_LOCAL_PATH }}
+
+Types: deb
+URIs: http://{{ LC_APT_UBUNTU_SECURITY_MIRROR }}/ubuntu
+Suites: {{ ansible_distribution_release }}-security
+Components: {{ LC_APT_UBUNTU_COMPONENTS }}
+Signed-By: {{ LC_APT_KEY_LOCAL_PATH }}

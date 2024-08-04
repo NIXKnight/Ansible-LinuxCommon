@@ -18,8 +18,8 @@
 
 - name: Setup Official Package Repositories
   ansible.builtin.template:
-    src: "templates/etc/apt/{{ ansible_distribution }}.sources.list.j2"
-    dest: "/etc/apt/sources.list"
+    src: "templates/etc/apt/sources.list.d/{{ ansible_distribution }}.sources.j2"
+    dest: "/etc/apt/sources.list.d/{{ ansible_distribution | lower }}.sources"
   when: LC_CHANGES_APT_DEFAULT_SOURCES_LIST
 
 - name: Locales to be Generated
@@ -98,10 +98,10 @@
   when: LC_SETUP_THIRD_PARTY_REPOS
 
 - name: Add 3rd Party Repository Keys
-  ansible.builtin.apt_key:
-    url: "{{ item }}"
-    state: present
-  with_items: "{{ LC_THIRD_PARTY_REPOS_KEYS }}"
+  ansible.builtin.get_url:
+    url: "{{ item.APT_KEY_URL }}"
+    dest: "{{ item.APT_KEY_LOCAL_PATH }}"
+  with_items: "{{ LC_THIRD_PARTY_REPOS }}"
   when: LC_SETUP_THIRD_PARTY_REPOS
 
 - name: Install Updates
