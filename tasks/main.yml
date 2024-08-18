@@ -114,6 +114,7 @@
     name: "{{ lc_exim_packages }}"
     state: absent
     purge: yes
+  when: LC_REMOVE_EXIM
 
 - name: Install Packages
   ansible.builtin.apt:

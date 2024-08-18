@@ -25,6 +25,7 @@ LC_APT_DEBIAN_COMPONENTS: "main contrib non-free"
 LC_APT_UBUNTU_COMPONENTS: "main restricted universe multiverse"
 LC_APT_KEY_LOCAL_PATH: "/usr/share/keyrings/{{ ansible_distribution | lower }}-archive-keyring.gpg"
 LC_ENABLE_SRC_REPOS: False
+LC_REMOVE_EXIM: True
 LC_REBOOT: False
 LC_REBOOT_TIMEOUT: 120
 LC_EXTRA_PACKAGES: []
