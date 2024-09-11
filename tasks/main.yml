@@ -11,48 +11,11 @@
     dest: "/etc/hosts"
   when: LC_CHANGE_HOSTNAME
 
-- name: Change System Timezone
-  community.general.timezone:
-    name: "{{ LC_TIMEZONE }}"
-  when: LC_CHANGE_TIMEZONE
-
 - name: Setup Official Package Repositories
   ansible.builtin.template:
     src: "templates/etc/apt/sources.list.d/{{ ansible_distribution }}.sources.j2"
     dest: "/etc/apt/sources.list.d/{{ ansible_distribution | lower }}.sources"
   when: LC_CHANGES_APT_DEFAULT_SOURCES_LIST
-
-- name: Locales to be Generated
-  ansible.builtin.debconf:
-    name: "locales"
-    question: "locales/locales_to_be_generated"
-    value: "{{ LC_LOCALES | join(',') }}"
-    vtype: multiselect
-  when: LC_SET_LOCALES
-
-- name: Set Default Locale to {{ LC_DEFAULT_LOCALE }}
-  ansible.builtin.debconf:
-    name: "locales"
-    question: "locales/default_environment_locale"
-    value: "{{ LC_DEFAULT_LOCALE }}"
-    vtype: select
-  when: LC_SET_LOCALES
-
-- name: Ensure locales Package is Installed
-  ansible.builtin.apt:
-    name: "locales"
-    state: present
-    update_cache: yes
-  when: LC_SET_LOCALES
-
-- name: Set debconf Values
-  ansible.builtin.debconf:
-    name: "{{ item.name }}"
-    question: "{{ item.question }}"
-    value: "{{ item.value }}"
-    vtype: "{{ item.vtype }}"
-  with_items: "{{ LC_DEBCONF_VALUES }}"
-  when: LC_SET_DEBCONF_VALUES
 
 - name: Replace bashrc
   ansible.builtin.copy:
@@ -116,9 +79,20 @@
     purge: yes
   when: LC_REMOVE_EXIM
 
+- name: Set debconf Values for Packages
+  ansible.builtin.debconf:
+    name: "{{ item.name }}"
+    question: "{{ debconf_item.question }}"
+    value: "{{ debconf_item.value }}"
+    vtype: "{{ debconf_item.vtype }}"
+  with_items: "{{ LC_PACKAGES_DEBCONF }}"
+  vars:
+    debconf_item: "{{ item.debconf_values }}"
+  when: item.debconf_values is defined and item.debconf_values | length > 0
+
 - name: Install Packages
   ansible.builtin.apt:
-    pkg: "{{ lc_basic_packages + LC_EXTRA_PACKAGES }}"
+    pkg: "{{ lc_basic_packages + LC_EXTRA_PACKAGES + (LC_PACKAGES_DEBCONF | map(attribute='name') | list) }}"
     state: present
     update_cache: yes
   when: LC_INSTALL_PACKAGES
