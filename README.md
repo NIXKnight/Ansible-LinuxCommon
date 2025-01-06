@@ -1,4 +1,5 @@
 # **Ansible-LinuxCommon**
+**This role has been moved https://github.com/NIXKnight/Ansible-Collections.**
 
 Ansible-LinuxCommon is an Ansible role for configuring shell environment and installing some very basic utilities on a new Linux system. It does the following on a default install:
 * Change hostname.
